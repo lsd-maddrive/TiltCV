@@ -134,20 +134,33 @@ static THD_FUNCTION(Sender, arg)
                     /* Cast to real message */
                     int8_t byte = msg;
 
-                    /* Gonna send 1 from MATLAB to send me number */
+
                     if ( byte == 1 )
                     {
-                      palToggleLine( LINE_LED1 );
+                      palSetLine(LINE_LED1);
+                      palClearLine(LINE_LED2);
+                      palClearLine(LINE_LED3);
+
                     }
 
                     else if ( byte == 2 )
                     {
-                      palToggleLine( LINE_LED2 );
+                      palSetLine(LINE_LED1);
+                      palSetLine(LINE_LED2);
+                      palClearLine(LINE_LED3);
 
+                    }
+                    else if (byte == 3)
+                    {
+                      palSetLine(LINE_LED1);
+                      palSetLine(LINE_LED2);
+                      palSetLine(LINE_LED3);
                     }
                     else
                     {
-                      palToggleLine( LINE_LED3 );
+                      palClearLine(LINE_LED1);
+                      palClearLine(LINE_LED2);
+                      palClearLine(LINE_LED3);
                     }
                 }
                 break;
