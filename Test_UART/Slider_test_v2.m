@@ -22,7 +22,7 @@ function my_closereq(hObject, eventdata, handles)
     display('Hello =)');
     
     global Port;
-    if exist(Port)
+    if exist('Port')
         fclose(Port);
     end
     delete(hObject);
@@ -51,7 +51,7 @@ varargout{1} = handles.output;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbutton1_Callback(hObject, eventdata, handles)
 global Port;
-Port = serial('/dev/ttyUSB0');%here
+Port = serial('/dev/ttyUSB1');%here
 set(Port,'BaudRate',115200);
 fopen(Port);
 
