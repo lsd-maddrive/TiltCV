@@ -18,12 +18,23 @@ else
 end
 
 
+function my_closereq(hObject, eventdata, handles)
+    display('Hello =)');
+    
+    global Port;
+    if exist(Port)
+        fclose(Port);
+    end
+    delete(hObject);
+
+    
 
 % --- Executes just before Slider_test_v2 is made visible.
 function Slider_test_v2_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 guidata(hObject, handles);
 
+set(hObject,'CloseRequestFcn',@my_closereq)
 
 
 
@@ -40,7 +51,7 @@ varargout{1} = handles.output;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbutton1_Callback(hObject, eventdata, handles)
 global Port;
-Port = serial('/dev/ttyUSB5');%here
+Port = serial('/dev/ttyUSB0');%here
 set(Port,'BaudRate',115200);
 fopen(Port);
 
@@ -90,11 +101,3 @@ function texto_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Button to close the port%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function Fclose_Callback(hObject, eventdata, handles)
-global Port;
-fclose(Port);
-
