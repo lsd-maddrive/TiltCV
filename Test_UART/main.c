@@ -159,7 +159,7 @@ static THD_FUNCTION(Sender, arg)
                     else
                     {
                       palClearLine(LINE_LED1);
-                      palClearLine(LINE_LED2);
+                      palToggleLine( LINE_LED2 );
                       palClearLine(LINE_LED3);
                     }
                 }
