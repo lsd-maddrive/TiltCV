@@ -9,10 +9,6 @@ from PyQt5.QtGui import QPixmap
 import serial
 
 ser = serial.Serial('/dev/ttyUSB0',115200,timeout=1)
-flag1=0
-flag2=0
-flag3=0
-flag4=0
 
 class Example(QWidget):
 
@@ -26,8 +22,11 @@ class Example(QWidget):
 
         sld = QSlider(Qt.Horizontal, self)
         sld.setFocusPolicy(Qt.NoFocus)
+        sld.setMinimum(0)
+        sld.setMaximum(1000)
         sld.setGeometry(30, 40, 100, 30)
         sld.valueChanged[int].connect(self.changeValue)
+
 
         self.label = QLabel(self)
         self.label.setPixmap(QPixmap('mute.png'))
@@ -40,55 +39,14 @@ class Example(QWidget):
 
     def changeValue(self, value):
         
-        global flag1
-        global flag2
-        global flag3
-        global flag4
-        if value == 0:
-            self.label.setPixmap(QPixmap('mute.png'))
-            if flag1==0:
-                flag1=1
-                flag2=0
-                flag3=0
-                flag4=0
-                x = 1
-                data = bytes([int(x)])
-                ser.write(data)
-                print(x)
+
             
-        elif value > 0 and value <= 30:
-            if flag2==0:
-                flag1=0
-                flag2=1
-                flag3=0
-                flag4=0
-                x = 2
-                data = bytes([int(x)])
-                ser.write(data)
-                print(x)
-            
-        elif value > 30 and value < 80:
-            if flag3==0:
-                flag1=0
-                flag2=0
-                flag3=1
-                flag4=0
-                x = 3
-                data = bytes([int(x)])
-                ser.write(data)
-                print(x)
-            
-        else:
-            if flag4==0:
-                flag1=0
-                flag2=0
-                flag3=0
-                flag4=1
-                x = 4
-                data = bytes([int(x)])
-                ser.write(data)
-                print(x)
-            
+            x = value
+            print(x) #for check value
+
+            y = value.to_bytes(2, byteorder='big') #convert to byte array
+            ser.write(y)
+            print(y) #for check byte array
 
 
 if __name__ == '__main__':
