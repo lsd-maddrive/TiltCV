@@ -3,12 +3,87 @@
 
 #include <chprintf.h>
 
+// -----------------------------------------
+//
+//    Equalizer API
+//
+// -----------------------------------------
+
+PWMConfig pwmConf = {
+    .frequency      = 1000000,  // 1MHz
+    .period         = 10000,    // 10ms ~ 100Hz
+    .callback       = NULL,
+    .channels       = {
+                           /* For all drivers channels 3 and 2 are used */
+                          {.mode = PWM_OUTPUT_DISABLED,     .callback = NULL},
+                          /* PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW - because channel is TIM1_CH2N - complementary mode */
+                          /* for this mode set STM32_PWM_USE_ADVANCED in mcuconf.h */
+                          {.mode = PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW,  .callback = NULL},
+                          {.mode = PWM_OUTPUT_ACTIVE_HIGH,  .callback = NULL},
+                          {.mode = PWM_OUTPUT_DISABLED,     .callback = NULL}
+                      },
+    .cr2            = 0,
+    .dier           = 0
+};
+
+PWMDriver *eq_dr_led1 = &PWMD3;
+PWMDriver *eq_dr_led2 = &PWMD4;
+PWMDriver *eq_dr_led3 = &PWMD1;
+
+/* Each <eq_delta_value> new led starts */
+static uint16_t eq_delta_value      = 80;
+static float    eq_value_2_dc_rate  = 0;
+
 /*
- * Setup:
- * halconf.h -  Enable HAL_USE_SERIAL
- *              To change the size of the buffer, change SERIAL_BUFFERS_SIZE
- * mcuconf.h -  Choose required serial STM32_SERIAL_USE_*
+ * LED1 - B0    - T3C3
+ * LED2 - B7    - T4C2
+ * LED3 - B14   - T1C2N
  */
+void led_equalizer_init ( void )
+{
+    eq_value_2_dc_rate = (float)pwmConf.period / eq_delta_value;
+
+    palSetLineMode( LINE_LED1, PAL_MODE_ALTERNATE(2) );
+    palSetLineMode( LINE_LED2, PAL_MODE_ALTERNATE(2) );
+    palSetLineMode( LINE_LED3, PAL_MODE_ALTERNATE(1) );
+
+    /* Just because configs are same - I can use one structure */
+    pwmStart( eq_dr_led1, &pwmConf );
+    pwmStart( eq_dr_led2, &pwmConf );
+    pwmStart( eq_dr_led3, &pwmConf );
+}
+
+/* Static in proto means that function is not public */
+/*
+ * in:  <value> - input value from user
+ *      <idx>   - number of LED in line
+ */
+static uint32_t equalizer_value_2_dc ( int32_t value, uint16_t idx )
+{
+    uint32_t duty_cycle = (value - eq_delta_value * idx) * eq_value_2_dc_rate;
+    return ( duty_cycle > pwmConf.period ? pwmConf.period : duty_cycle );
+}
+
+/*
+ * @note: <value> can be in range [0; <eq_delta_value> * 3]
+ */
+void led_equalizer_set_value ( uint16_t value )
+{
+    uint32_t led1_dc = equalizer_value_2_dc( value, 0 );
+    uint32_t led2_dc = equalizer_value_2_dc( value, 1 );
+    uint32_t led3_dc = equalizer_value_2_dc( value, 2 );
+
+    pwmEnableChannel( eq_dr_led1, 2, led1_dc );
+    pwmEnableChannel( eq_dr_led2, 1, led2_dc );
+    pwmEnableChannel( eq_dr_led3, 1, led3_dc );
+}
+
+
+// -----------------------------------------
+//
+//    Interface API
+//
+// -----------------------------------------
 
 /*
  * Serial configuration
@@ -25,116 +100,71 @@ static const SerialConfig sdcfg = {
    */
 };
 
-#define SERIAL_CHARACTER            0x00
-#define SERIAL_BYTE_ARRAY           0x01
-#define SERIAL_UINT32               0x02
-#define SERIAL_STRING               0x03
-#define SERIAL_FORMATTED_STRING     0x04
-#define SERIAL_MATLAB               0x05
+SerialDriver *interface_comm_dr = &SD2;
 
-//const uint8_t send_type = SERIAL_CHARACTER;
-//const uint8_t send_type = SERIAL_BYTE_ARRAY;
-//const uint8_t send_type = SERIAL_UINT32 ;
-//const uint8_t send_type = SERIAL_STRING ;
-//const uint8_t send_type = SERIAL_FORMATTED_STRING;
-const uint8_t send_type = SERIAL_MATLAB;
-
-int Flagfor2byte = 0; // flag to write two bytes
-
-// need to fix
-int16_t byte2;
-int8_t byte1;
-
-static THD_WORKING_AREA(waSender, 128);
-static THD_FUNCTION(Sender, arg)
+void interface_comm_init ( void )
 {
-    arg = arg;      /* just to avoid warnings from compiler */
-    while (true)
-    {
-      /* Read one byte data with timeout 10 ms */
-                      msg_t msg = sdGetTimeout( &SD2, MS2ST( 10 ) );
+    palSetPadMode( GPIOD, 5, PAL_MODE_ALTERNATE(7) );   // TX = PG_14
+    palSetPadMode( GPIOD, 6, PAL_MODE_ALTERNATE(7) );   // RX = PG_9
 
-                      if ( msg >= 0 )
-                      {
-
-                        if(Flagfor2byte == 0)
-                        {
-                          byte1 = msg;
-                          Flagfor2byte = 1;
-
-                        }
-
-                        // merge two bytes
-                        else
-                        {
-                          byte2 =( byte1 << 8 )| msg;
-                          Flagfor2byte = 0;
-
-                        }
-
-
-
-                          if ( byte2 < 250 )
-                          {
-                            palClearLine(LINE_LED1);
-                            palClearLine( LINE_LED2 );
-                            palClearLine(LINE_LED3);
-
-                          }
-
-                          else if ( byte2 >= 250 && byte2 < 500 )
-                          {
-                            palSetLine(LINE_LED1);
-                            palClearLine(LINE_LED2);
-                            palClearLine(LINE_LED3);
-
-
-
-                          }
-                          else if (byte2 >= 500 && byte2 < 750)
-                          {
-                            palSetLine(LINE_LED1);
-                            palSetLine(LINE_LED2);
-                            palClearLine(LINE_LED3);
-
-
-                          }
-                          else
-                          {
-                            palSetLine(LINE_LED1);
-                            palSetLine(LINE_LED2);
-                            palSetLine(LINE_LED3);
-
-
-                          }
-                     // }
-                      }
-    }
+    sdStart( interface_comm_dr, &sdcfg );
 }
+
+int16_t interface_comm_get_value ( void )
+{
+        uint8_t bytes[2];
+        msg = sdReadTimeout( &SD2, bytes, 2, MS2ST( 10 ) );
+
+    if ( msg == 2 )
+    {
+
+        /* Now you work only with two byte - use only two byte */
+        /* Otherwise, use sdReadTimeout( sdp, buffer, bytes, time ) */
+
+
+        return (bytes[0]<<8)|(bytes[1]);
+    }
+
+    return -1;
+}
+
+// -----------------------------------------
+//
+//    Main application
+//
+// -----------------------------------------
+
+/* Test case - equalizer works in full range */
+#define TEST_CASE
 
 int main(void)
 {
     chSysInit();
     halInit();
 
-    /* as 6th driver is used, use SD6 structure for driver functions */
-    sdStart( &SD2, &sdcfg );
-    /*
-     * https://os.mbed.com/platforms/ST-Nucleo-F767ZI/
-     * serial 6th driver is on PG_14, PG_9
-     * alternate function is 8th (check datasheet)
-     */
-    palSetPadMode( GPIOD, 5, PAL_MODE_ALTERNATE(7) );  // TX = PG_14
-    palSetPadMode( GPIOD, 6, PAL_MODE_ALTERNATE(7) );   // RX = PG_9
+    interface_comm_init();
+    led_equalizer_init();
 
-    /* create thread that sends just string */
-    chThdCreateStatic( waSender, sizeof(waSender), NORMALPRIO, Sender, NULL );
     while (true)
     {
-        chThdSleepSeconds( 1 );
-       // get_external_value();
+#ifdef TEST_CASE
 
+        static uint16_t cntr = 0;
 
+        led_equalizer_set_value( cntr++ );
+        cntr = cntr >= 240 ? 0 : cntr;
+
+#else // TEST_CASE
+
+        int16_t new_value = interface_comm_get_value();
+        if ( new_value > 0 )
+        {
+            /* Here we get new value */
+            led_equalizer_set_value( new_value );
+        }
+
+#endif // TEST_CASE
+
+        chThdSleepMilliseconds( 10 );
     }
 }
-
