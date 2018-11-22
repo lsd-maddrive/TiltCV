@@ -1,0 +1,3 @@
+opencv-python
+pyqt5==5.10
+pyserial
