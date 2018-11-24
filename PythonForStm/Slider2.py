@@ -126,12 +126,19 @@ class SetupSliderLimit(wgt.QWidget):
         self.sliderWgt = slider
         self.minValue, self.maxValue = self.sliderWgt.getLimits()
 
+        self.tmpMinValue = self.minValue
+        self.tmpMaxValue = self.maxValue
+
         layout = wgt.QHBoxLayout(self)
         self.setLayout(layout)
 
         labelMax = wgt.QLabel('Max:', self)
         labelMin = wgt.QLabel('Min:', self)
         labelIdx = wgt.QLabel('Servo {}'.format(str(self.sliderWgt.getIndex())), self)
+
+        labelIdx.setFrameShape(wgt.QFrame.Panel)
+        labelIdx.setFrameShadow(wgt.QFrame.Sunken)
+        labelIdx.setLineWidth(1)
 
         self.textMax = wgt.QLineEdit(str(self.maxValue), self)
         self.textMax.setValidator( QIntValidator(0, 99999) )
@@ -150,14 +157,14 @@ class SetupSliderLimit(wgt.QWidget):
     def slotTextMaxChanged(self):
         try:
             input = int(self.textMax.text())
-            self.maxValue = input
+            self.tmpMaxValue = input
         except:
             print('Invalid input')
 
     def slotTextMinChanged(self):
         try:
             input = int(self.textMin.text())
-            self.minValue = input
+            self.tmpMinValue = input
         except:
             print('Invalid input')
 
@@ -165,12 +172,14 @@ class SetupSliderLimit(wgt.QWidget):
         # Call it again to update values
         self.slotTextMinChanged()
         self.slotTextMaxChanged()
-
+        print('>>')
         # Swap
-        if self.minValue > self.maxValue:
-            tmp             = self.minValue
-            self.minValue   = self.maxValue
-            self.maxValue   = tmp
+        if self.tmpMinValue > self.tmpMaxValue:
+            self.minValue   = self.tmpMaxValue
+            self.maxValue   = self.tmpMinValue
+        else:
+            self.minValue   = self.tmpMinValue
+            self.maxValue   = self.tmpMaxValue
 
         self.sliderWgt.setLimits( self.minValue, self.maxValue )
 
