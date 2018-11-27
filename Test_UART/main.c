@@ -41,20 +41,6 @@ PWMDriver *pwmDriver_serv_2 = &PWMD3;
 static uint16_t eq_delta_value      = 80;
 static float    eq_value_2_dc_rate  = 0;
 
-struct Value_PWM
-        {
-
-            uint8_t num_serv;
-            uint16_t value_PWM;
-
-        };
-
-
-
-
-
-
-
 
 static const SerialConfig sdcfg = {
   .speed = 115200,          /* baudrate, directly number */
@@ -85,20 +71,23 @@ struct Value_PWM interface_comm_get_value ( void )
 
     msg_t msg = sdReadTimeout( &SD2, &start_byte, 1, MS2ST( 10 ) ); 
 
-    if(start_byte == '#')
+    if(msg==1)
     {
+      if(start_byte == '#')
+      {
 
-         msg = sdReadTimeout( &SD2, &received_bytes, 3, MS2ST( 10 ) );
+        palToggleLine(LINE_LED2);
+        msg = sdReadTimeout( &SD2, &received_bytes, 3, MS2ST( 10 ) );
 
         if ( msg == 3 )
         {
-
+          palToggleLine(LINE_LED1);
             result.num_serv = received_bytes[0];
             result.value_PWM = (received_bytes[1]<<8)|(received_bytes[2]);
             return result;
         }
+      }
     }
-
     return result;
 }
 

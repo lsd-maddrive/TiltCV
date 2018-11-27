@@ -14,8 +14,9 @@ class SerialCombobox(wgt.QComboBox):
         super().__init__()
 
         import serial.tools.list_ports
-        comports = list(serial.tools.list_ports.comports()[0])
-        valid_comports = [port for port in comports if port.startswith('/dev')]
+        comports = list(serial.tools.list_ports.comports())
+
+        valid_comports = [port.device for port in comports]
 
         self.addItems(valid_comports)
 
@@ -70,9 +71,10 @@ class ServoSlider(wgt.QWidget):
 
         if self.serial:
             x = value
-            self.serial.write(bytes([ord('#'), self.idx]))
-            y = value.to_bytes(2, byteorder='big') #convert to byte array
-            self.serial.write(y)
+            send_pkg = bytes([ord('#'), self.idx]) + value.to_bytes(2, byteorder='big')
+            print(send_pkg)
+            self.serial.write(send_pkg)
+            # self.serial.write(y)
 
 
 class CameraWidget(wgt.QLabel):
