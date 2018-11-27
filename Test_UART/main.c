@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <chprintf.h>
 
+#define Min_value_us_PWM_2 750;
+#define Max_value_us_PWM_2 1850;
+
+#define Min_value_us_PWM_1 750;
+#define Max_value_us_PWM_1 2200;
 // -----------------------------------------
 //
 //    Equalizer API
@@ -84,6 +89,8 @@ struct Value_PWM interface_comm_get_value ( void )
           palToggleLine(LINE_LED1);
             result.num_serv = received_bytes[0];
             result.value_PWM = (received_bytes[1]<<8)|(received_bytes[2]);
+
+
             return result;
         }
       }
