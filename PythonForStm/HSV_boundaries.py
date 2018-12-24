@@ -11,10 +11,12 @@ image_RGB=cv2.imread('RGB.png')
 #Выводим картинку на экран
 cv2.imshow('Original',image_RGB)
 
+
 image_RGB = cv2.resize(image_RGB,(480,360))
 #Преобразовываем в формат HSV и в нужные размеры картинки
 image_HSV=cv2.cvtColor(image_RGB, cv2.COLOR_BGR2HSV)	
 #image_HSV = cv2.resize(image_HSV,(480,360))
+
 
 #Создание окна в котором создаются последующие виджеты
 cv2.namedWindow('image')
@@ -53,6 +55,7 @@ while (1):
 	#Выводим результат
 	#cv2.imshow('image',mask)
 	cv2.imshow('image',res)
+
 
 	if cv2.waitKey(30)==27:
 		break
