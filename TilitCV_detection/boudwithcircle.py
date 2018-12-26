@@ -26,9 +26,6 @@ cv2.createTrackbar('UpS','image', 255, 255, nothing)
 cv2.createTrackbar('DownV','image', 0, 255, nothing)
 cv2.createTrackbar('UpV','image', 255, 255, nothing)
 
-#cv2.createTrackbar('DownH2','image', 175, 255, nothing)
-#cv2.createTrackbar('UpH2','image', 255, 255, nothing)
-
 cv2.createTrackbar('erosion','image', 3, 20, nothing)
 cv2.createTrackbar('dilation','image', 3, 20, nothing)
 
@@ -66,18 +63,18 @@ while(1):
 
     _, frame = cap.read()
     output = frame.copy()
-    #median = cv2.medianBlur(frame,5)
+
 
     blur = cv2.GaussianBlur(frame,(5,5),0)
+   
     hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
 
     lower_value = np.array([DownH1,DownS,DownV])
     upper_value = np.array([UpH1,UpS,UpV])
-
     res = cv2.inRange(hsv, lower_value, upper_value)
 
-    kernel = np.ones((5,5), np.uint8)
 
+    kernel = np.ones((5,5), np.uint8)
 
     erosion = cv2.erode(res, kernel, iterations = erosion_iter)
 
@@ -89,6 +86,7 @@ while(1):
 
     x = None
     y = None
+
 
     #create circle
     gray = cv2.cvtColor(processed, cv2.COLOR_BGR2GRAY)
