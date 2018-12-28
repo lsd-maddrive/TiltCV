@@ -12,6 +12,11 @@ y_center = 240
 
 center_deviation = 5
 
+alpha = 0.4
+beta = 1 - alpha
+
+new_coordinates = 0
+old_coordinates = None
 
 
 
@@ -34,6 +39,8 @@ cv2.createTrackbar('maxrad','image', 700, 1000, nothing)
 
 cv2.createTrackbar('deviation','image', 0, 240, nothing)
 
+x = None
+y = None
 
 while(1):
 
@@ -84,8 +91,7 @@ while(1):
 
     processed = cv2.bitwise_and(frame,frame, mask = dilation)
 
-    x = None
-    y = None
+
 
 
     #create circle
@@ -101,14 +107,30 @@ while(1):
  
     # loop over the (x, y) coordinates and radius of the circles
         for (x, y, r) in circles:
+            
+            new_coordinates = np.array([x, y, r])
+            
+            if old_coordinates is None:
+                old_coordinates = new_coordinates
+
+            valid_coordinates = new_coordinates * alpha + old_coordinates * beta
+
+            old_coordinates = new_coordinates
+
+            x = int(valid_coordinates[0])
+            y = int(valid_coordinates[1])
+            r = int(valid_coordinates[2])
             # draw the circle in the output image, then draw a rectangle
             # corresponding to the center of the circle
             cv2.circle(output, (x, y), r, (0, 255, 0), 4)
             cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 
+            # cv2.circle(output, (valid_coordinates[0], valid_coordinates[1]), valid_coordinates[2], (0, 255, 0), 4)
+            # cv2.rectangle(output, (valid_coordinates[0] - 5, valid_coordinates[1] - 5), (valid_coordinates[0] + 5, valid_coordinates[1] + 5), (0, 128, 255), -1)
+
     if (x or y) is not None:
        
-        if x > x_right_deviation or x < x_left_deviation or y < y_up_deviation or y >y_down_deviation:
+        if valid_coordinates[0] > x_right_deviation or valid_coordinates[0] < x_left_deviation or valid_coordinates[1] < y_up_deviation or valid_coordinates[1] >y_down_deviation:
 
             if x > x_right_deviation:
                 print('deviation to the right x')
