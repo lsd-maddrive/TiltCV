@@ -42,9 +42,9 @@ while(1):
 
     #median = cv2.medianBlur(frame,5)
 
-    blur = cv2.GaussianBlur(frame,(5,5),0)
-    hsv = cv2.cvtColor(blur, cv2.COLOR_RGB2HSV)
-    #hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
+    #blur = cv2.GaussianBlur(frame,(5,5),0)
+    #hsv = cv2.cvtColor(blur, cv2.COLOR_RGB2HSV)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
 
     lower_value = np.array([DownH1,DownS,DownV])
     upper_value = np.array([UpH1,UpS,UpV])
@@ -64,7 +64,8 @@ while(1):
 
 
 
-    #cv2.imshow('hsv', hsv)
+    cv2.imshow('hsv', hsv)
+    cv2.imshow('res', res)
     cv2.imshow('image',processed)
     cv2.imshow('frame', dilation)
     cv2.imshow('original', frame)
