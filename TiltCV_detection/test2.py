@@ -1,32 +1,65 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 
-bgr_img = cv2.imread('RGB.png') # read as it is
+def nothing(x):
+    pass
 
-if bgr_img.shape[-1] == 3:           # color image
-    b,g,r = cv2.split(bgr_img)       # get b,g,r
-    rgb_img = cv2.merge([r,g,b])     # switch it to rgb
-    gray_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2HSV)
-else:
-    gray_img = bgr_img
+cap = cv2.VideoCapture(0)
 
-img = cv2.medianBlur(gray_img, 5)
-cimg = cv2.cvtColor(img,cv2.COLOR_HSV2BGR)
+cv2.namedWindow('image')
 
-circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,20,
-                            param1=50,param2=30,minRadius=0,maxRadius=0)
+cv2.createTrackbar('unknow1','image', 30, 190, nothing)
+cv2.createTrackbar('unknow2','image', 700, 1000, nothing)
 
-circles = np.uint16(np.around(circles))
+cv2.createTrackbar('param1','image', 1, 1000, nothing)
+cv2.createTrackbar('param2','image', 1, 1000, nothing)
 
-for i in circles[0,:]:
+cv2.createTrackbar('minRadius','image', 1, 1000, nothing)
+cv2.createTrackbar('maxRadius','image', 1, 1000, nothing)
+
+#cv2.createTrackbar('DownH2','image', 175, 255, nothing)
+#cv2.createTrackbar('UpH2','image', 255, 255, nothing)
+
+
+
+while(1):
+
+
+
+    unknow1 = cv2.getTrackbarPos('unknow1','image')
+    unknow2 = cv2.getTrackbarPos('unknow2','image')
+
+    param1 = cv2.getTrackbarPos('param1','image')
+    param2 = cv2.getTrackbarPos('param2','image')
+
+    minRadius = cv2.getTrackbarPos('minRadius','image')
+    maxRadius = cv2.getTrackbarPos('maxRadius','image')
+
+    _, frame = cap.read()
+
+    #median = cv2.medianBlur(frame,5)
+
+    blur = cv2.GaussianBlur(frame,(3,3),0)
+
+    blur = cv2.cvtColor(blur, cv2.COLOR_RGB2GRAY)
+
+    circles = cv2.HoughCircles(blur, cv2.HOUGH_GRADIENT, unknow1, unknow2, param1, param2, minRadius, maxRadius)
+   
+    circles = np.uint16(np.around(circles))
+    for i in circles[0,:]:
     # draw the outer circle
-    cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+     cv2.circle(frame,(i[0],i[1]),i[2],(0,255,0),2)
     # draw the center of the circle
-    cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+     cv2.circle(frame,(i[0],i[1]),2,(0,0,255),3)
+        
 
-plt.subplot(121),plt.imshow(rgb_img)
-plt.title('Input Image'), plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(cimg)
-plt.title('Hough Transform'), plt.xticks([]), plt.yticks([])
-plt.show()
+
+
+    #cv2.imshow('hsv', hsv)
+    cv2.imshow('image',frame)
+
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()

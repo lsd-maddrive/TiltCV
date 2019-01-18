@@ -38,7 +38,7 @@ beta = 1 - alpha
 cv2.namedWindow('image')
 
 cv2.createTrackbar('DownH1','image', 65, 255, nothing)
-cv2.createTrackbar('UpH1','image', 84, 255, nothing)
+cv2.createTrackbar('UpH1','image', 92, 255, nothing)
 
 cv2.createTrackbar('DownS','image', 55, 255, nothing)
 cv2.createTrackbar('UpS','image', 255, 255, nothing)
@@ -86,6 +86,7 @@ while(1):
     _, frame = cap.read()
     output = frame.copy()
 
+    newhogh = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) ####
 
     blur = cv2.GaussianBlur(frame,(3,3),0)
    
@@ -95,16 +96,17 @@ while(1):
     upper_value = np.array([UpH1,UpS,UpV])
     res = cv2.inRange(hsv, lower_value, upper_value)
 
+    newres = cv2.cvtColor(res, cv2.COLOR_GRAY2BGR)
 
     kernel = np.ones((3,3), np.uint8)
 
     erosion = cv2.erode(res, kernel, iterations = erosion_iter)
 
-    newres = cv2.cvtColor(res, cv2.COLOR_GRAY2BGR)
-
     opening = cv2.morphologyEx(erosion, cv2.MORPH_OPEN, kernel)
 
     dilation = cv2.dilate(erosion, kernel, iterations = dilation_iter)
+
+    newdilation = cv2.cvtColor(dilation, cv2.COLOR_GRAY2BGR)
 
     processed = cv2.bitwise_and(frame,frame, mask = dilation)
 
@@ -128,6 +130,9 @@ while(1):
         for (x, y, r) in circles:
             
 
+            # cv2.circle(output, (x, y), r, (0, 255, 0), 4)
+            # cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+
             cv2.circle(output, (x, y), r, (0, 255, 0), 4)
             cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 
@@ -140,7 +145,7 @@ while(1):
             if x > x_right_deviation:
                 print('deviation to the right x')
 
-                value_PWM_first_serv = value_PWM_first_serv - 20
+                value_PWM_first_serv = value_PWM_first_serv - 10
 
                 if value_PWM_first_serv < 0:
                     print('low value first serv')    
@@ -155,7 +160,7 @@ while(1):
 
       
 
-                value_PWM_first_serv = value_PWM_first_serv + 20
+                value_PWM_first_serv = value_PWM_first_serv + 10
 
                 if value_PWM_first_serv > 1000:
                     print('great value second serv') 
@@ -171,7 +176,7 @@ while(1):
                 
   
 
-                value_PWM_second_serv = value_PWM_second_serv - 20
+                value_PWM_second_serv = value_PWM_second_serv - 10
                 if value_PWM_second_serv < 0:
 
                     print('low value second serv') 
@@ -184,7 +189,7 @@ while(1):
             if y > y_down_deviation:
  
 
-                value_PWM_second_serv = value_PWM_second_serv + 20
+                value_PWM_second_serv = value_PWM_second_serv + 10
 
                 if value_PWM_second_serv > 1000:
 
@@ -211,27 +216,34 @@ while(1):
 
 
 
-    # cv2.imshow('image',output )
-    # cv2.imshow('frame', dilation)
-    # cv2.imshow('original', frame)
-    # cv2.imshow('circle', processed)
-    # cv2.imshow('erosion',erosion )
-    # cv2.imshow('dilation',dilation )
-    # cv2.imshow('hsv', hsv )
-    # cv2.imshow('res', res )
-    # tst = np.hstack((erosion, dilation))
-    # tst1 = np.hstack((processed, frame))
-    # cv2.imshow('tst', tst)
-    # cv2.imshow('tst1', tst1)
-    frame_with_boud = np.hstack((frame, newres))
-    cv2.imshow('frame_with_boud', frame_with_boud)
-    
     cv2.imshow('image',output )
+    cv2.imshow('frame', dilation)
+    cv2.imshow('original', frame)
+    cv2.imshow('circle', processed)
+    cv2.imshow('erosion',erosion )
+    cv2.imshow('dilation',dilation )
+    cv2.imshow('hsv', hsv )
+    cv2.imshow('res', res )
+    tst = np.hstack((erosion, dilation))
+    tst1 = np.hstack((processed, frame))
+    cv2.imshow('tst', tst)
+    cv2.imshow('tst1', tst1)
+    
+    # frame_with_boud = np.hstack((frame, newres))
+    # cv2.imshow('frame_with_boud', frame_with_boud)  
+    
+    # cv2.imshow('image',output )
 
-    erosion_with_dilation = np.hstack((erosion, dilation))
-    cv2.imshow('erosion_with_dilation',erosion_with_dilation)
+    # erosion_with_dilation = np.hstack((res, dilation))
+    # cv2.imshow('erosion_with_dilation',erosion_with_dilation)
 
-    cv2.imshow('dilation',processed)
+
+    # detect = np.hstack((newdilation, output))
+
+    # cv2.imshow('detect',detect)
+
+    # cv2.imshow('dilation',processed)
+
 
 
     k = cv2.waitKey(5) & 0xFF
