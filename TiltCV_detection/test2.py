@@ -8,8 +8,8 @@ cap = cv2.VideoCapture(0)
 
 cv2.namedWindow('image')
 
-cv2.createTrackbar('unknow1','image', 30, 190, nothing)
-cv2.createTrackbar('unknow2','image', 700, 1000, nothing)
+cv2.createTrackbar('dp','image', 30, 190, nothing)
+cv2.createTrackbar('minDist','image', 700, 1000, nothing)
 
 cv2.createTrackbar('param1','image', 1, 1000, nothing)
 cv2.createTrackbar('param2','image', 1, 1000, nothing)
@@ -26,8 +26,8 @@ while(1):
 
 
 
-    unknow1 = cv2.getTrackbarPos('unknow1','image')
-    unknow2 = cv2.getTrackbarPos('unknow2','image')
+    dp = cv2.getTrackbarPos('dp','image')
+    minDist = cv2.getTrackbarPos('minDist','image')
 
     param1 = cv2.getTrackbarPos('param1','image')
     param2 = cv2.getTrackbarPos('param2','image')
@@ -43,7 +43,7 @@ while(1):
 
     blur = cv2.cvtColor(blur, cv2.COLOR_RGB2GRAY)
 
-    circles = cv2.HoughCircles(blur, cv2.HOUGH_GRADIENT, unknow1, unknow2, param1, param2, minRadius, maxRadius)
+    circles = cv2.HoughCircles(blur, cv2.HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
    
     circles = np.uint16(np.around(circles))
     for i in circles[0,:]:

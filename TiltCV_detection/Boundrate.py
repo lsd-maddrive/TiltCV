@@ -44,16 +44,18 @@ while(1):
     # Take each frame
     _, frame = cap.read()
 
+    
     # Convert BGR to HSV
     #
    # blur = cv2.GaussianBlur(frame,(5,5),0)
    # median = cv2.medianBlur(blur,5)
-    median = cv2.medianBlur(frame,5)
+    median = cv2.medianBlur(frame,3)
    # blur = cv2.GaussianBlur(median,(9,9),0)
 
     #hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     hsv = cv2.cvtColor(median, cv2.COLOR_BGR2HSV)
 
+    equ = cv2.equalizeHist(hsv)
     # define range of blue color in HSV
     #lower_green = np.array([113,0,0])
     #upper_green = np.array([131,255,255])
@@ -62,7 +64,7 @@ while(1):
     upper_value = np.array([UpH1,UpS,UpV])
 
     # Threshold the HSV image to get only blue colors
-    mask = cv2.inRange(hsv, lower_value, upper_value)
+    mask = cv2.inRange(equ, lower_value, upper_value)
     #
     kernel = np.ones((Core1,Core2), np.uint8)
     erosion = cv2.erode(mask, kernel, iterations = 1)    
