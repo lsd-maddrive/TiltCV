@@ -37,6 +37,7 @@ while(1):
 
     _, frame = cap.read()
 
+    dp = dp/10
     #median = cv2.medianBlur(frame,5)
 
     blur = cv2.GaussianBlur(frame,(3,3),0)
