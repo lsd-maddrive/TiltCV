@@ -44,7 +44,14 @@ while(1):
 
     blur = cv2.cvtColor(blur, cv2.COLOR_RGB2GRAY)
 
-    circles = cv2.HoughCircles(blur, cv2.HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
+    clahe = cv2.createCLAHE(clipLimit=2, tileGridSize=(8,8)) 
+    cl1 = clahe.apply(blur)
+
+    equ = cv2.equalizeHist(blur)
+
+    edges1 = cv2.Canny(cl1,100,200)
+
+    circles = cv2.HoughCircles(edges1, cv2.HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
    
     circles = np.uint16(np.around(circles))
     for i in circles[0,:]:
@@ -58,6 +65,7 @@ while(1):
 
     #cv2.imshow('hsv', hsv)
     cv2.imshow('image',frame)
+    cv2.imshow('blur', edges1)
 
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
