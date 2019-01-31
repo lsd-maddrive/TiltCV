@@ -28,6 +28,24 @@ while (1):
 
     edges2 = cv2.Canny(new_frame,100,200)
 
+
+    circles = cv2.HoughCircles(edges1, cv2.HOUGH_GRADIENT, minrad, maxrad)
+    
+    if circles is not None:
+    # convert the (x, y) coordinates and radius of the circles to integers
+        
+        circles = np.round(circles[0, :]).astype("int")
+ 
+    # loop over the (x, y) coordinates and radius of the circles
+        for (x, y, r) in circles:
+            
+
+            # cv2.circle(output, (x, y), r, (0, 255, 0), 4)
+            # cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+
+            cv2.circle(edges1, (x, y), r, (0, 255, 0), 4)
+            cv2.rectangle(edges2, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+
     cv2.imshow('Canny_frame', edges2)
     cv2.imshow('Canny_Equ', edges1)
     cv2.imshow('Equ', equ)
