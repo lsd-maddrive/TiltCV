@@ -9,19 +9,19 @@ def nothing(x):
 
 cap = cv2.VideoCapture(0)
 
-ser = serial.Serial('/dev/ttyUSB0',115200,timeout=1)
+# ser = serial.Serial('/dev/ttyUSB0',115200,timeout=1)
 
-first_serv = 1
-second_serv = 2
+# first_serv = 1
+# second_serv = 2
 
-value_PWM_first_serv = 500
-value_PWM_second_serv = 500
+# value_PWM_first_serv = 500
+# value_PWM_second_serv = 500
 
-send_pkg = bytes([ord('#'), first_serv]) + value_PWM_first_serv.to_bytes(2, byteorder='big')
-ser.write(send_pkg)
+# send_pkg = bytes([ord('#'), first_serv]) + value_PWM_first_serv.to_bytes(2, byteorder='big')
+# ser.write(send_pkg)
 
-send_pkg = bytes([ord('#'), second_serv]) + value_PWM_second_serv.to_bytes(2, byteorder='big')
-ser.write(send_pkg)
+# send_pkg = bytes([ord('#'), second_serv]) + value_PWM_second_serv.to_bytes(2, byteorder='big')
+# ser.write(send_pkg)
 
 x_center = 320
 y_center = 240
@@ -131,17 +131,33 @@ while(1):
 
 
     cv2.imshow('image',output )
-    cv2.imshow('frame', dilation)
-    cv2.imshow('original', frame)
-    cv2.imshow('circle', processed)
-    cv2.imshow('erosion',erosion )
-    cv2.imshow('dilation',dilation )
-    cv2.imshow('hsv', hsv )
-    cv2.imshow('res', res )
-    tst = np.hstack((erosion, dilation))
-    tst1 = np.hstack((processed, frame))
-    cv2.imshow('tst', tst)
-    cv2.imshow('tst1', tst1)
+    # cv2.imshow('frame', dilation)
+    # cv2.imshow('original', frame)
+    # cv2.imshow('circle', processed)
+    # cv2.imshow('erosion',erosion )
+    # cv2.imshow('dilation',dilation )
+    # cv2.imshow('hsv', hsv )
+    # cv2.imshow('res', res )
+    
+    tst0 = np.hstack((output,blur))
+
+    tst1 = np.hstack((blur,newres))
+
+    tst2 = np.hstack((res,dilation))
+
+    tst3 = np.hstack((output,newdilation))
+
+    tst4 = np.hstack((newdilation,frame))
+    
+    cv2.imshow('tst0', tst0 )
+    cv2.imshow('tst1', tst1 )
+    cv2.imshow('tst2', tst2 )
+    cv2.imshow('tst3', tst3 )
+    cv2.imshow('tst4', tst4 )
+
+    # tst1 = np.hstack((processed, frame))
+    # cv2.imshow('tst', tst)
+    # cv2.imshow('tst1', tst1)
     
  
 

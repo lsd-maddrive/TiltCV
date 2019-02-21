@@ -19,7 +19,7 @@ while(1):
 	kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
 	closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
 	
-	cnts = cv2.findContours(closed.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[1]
+	cnts = cv2.findContours(closed.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[1]
 
 	total = 0
 
