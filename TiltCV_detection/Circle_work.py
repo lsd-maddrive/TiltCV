@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import argparse
-import serial
+# import serial
 
 
 def nothing(x):

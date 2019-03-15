@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 
+def nothing(x):
+    pass
+
 def createTrackbar():
 	cv2.namedWindow('image')
 
@@ -50,3 +53,4 @@ def getValueMorphIter():
 def getValueDeviation():
 
 	center_deviation = cv2.getTrackbarPos('deviation','image')
+	return center_deviation

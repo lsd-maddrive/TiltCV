@@ -27,7 +27,7 @@ def processing_morphological_operators(frame):
 	hsv_with_boundaries = boundaries_hsv(frame)
 
 	kernel = np.ones((3,3), np.uint8)
-
+	erosion_iter, dilation_iter = tb.getValueMorphIter()
 	erosion = cv2.erode(hsv_with_boundaries, kernel, iterations = erosion_iter)
 	dilation = cv2.dilate(erosion, kernel, iterations = dilation_iter)
 

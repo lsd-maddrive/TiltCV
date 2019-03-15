@@ -12,7 +12,8 @@ def finding_a_circle_around_the_contour(frame):
 
 	x = None
 	y = None
-	_, contours, hierarchy = cv2.findContours(dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	# _, contours, hierarchy = cv2.findContours(dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	contours,_ = cv2.findContours(dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
 	cv2.drawContours(frame,contours,0,(0,0,255),2)
 	
@@ -25,4 +26,36 @@ def finding_a_circle_around_the_contour(frame):
 
 		cv2.circle(frame,center,radius,(0,255,0),2)
 
-return frame
+	return frame
+
+
+
+def Hough_circle(frame):
+		
+		#create circle
+    dilation = ip.processing_morphological_operators(frame)
+
+    circles = cv2.HoughCircles(dilation, cv2.HOUGH_GRADIENT, minrad, maxrad)
+    
+    if circles is not None:
+    # convert the (x, y) coordinates and radius of the circles to integers
+        
+        circles = np.round(circles[0, :]).astype("int")
+ 
+    # loop over the (x, y) coordinates and radius of the circles
+        for (x, y, r) in circles:
+            
+
+            cv2.circle(output, (x, y), r, (0, 255, 0), 4)
+            cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+
+
+def Hough_circle_v2(frame):
+	circles = cv2.HoughCircles(edges1, cv2.HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
+
+	circles = np.uint16(np.around(circles))
+	for i in circles[0,:]:
+		# draw the outer circle
+		cv2.circle(frame,(i[0],i[1]),i[2],(0,255,0),2)
+		# draw the center of the circle
+		cv2.circle(frame,(i[0],i[1]),2,(0,0,255),3)
