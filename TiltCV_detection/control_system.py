@@ -2,10 +2,57 @@ import cv2
 import numpy as np
 import argparse
 import serial
-
+import track_bar as tb
 
 def nothing(x):
     pass
+
+
+
+
+
+def check_deviation():
+    deviation = tb.getValueDeviation()
+    #need get center coord
+
+    if x or y is not None:
+        if(abs(x))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 cap = cv2.VideoCapture(0)
 
@@ -18,7 +65,13 @@ center_deviation = 5
 
 
 
+
+
+
+
+
 cv2.createTrackbar('deviation','image', 180, 240, nothing)
+
 
 x = None
 y = None
