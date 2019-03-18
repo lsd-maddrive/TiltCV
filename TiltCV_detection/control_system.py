@@ -1,33 +1,35 @@
-import cv2
-import numpy as np
-import argparse
-import serial
 import track_bar as tb
 import math
 import serial_connection as sc
 
-def nothing(x):
-    pass
 
 
-
-
-
-def check_deviation():
+def check_deviation(x_real,y_real,value_PWM_first_serv,value_PWM_second_serv,ser):
+   
     deviation = tb.getValueDeviation()
-    #need get center coord
-    #need get real coord
+
+    coef =10
+    x_center = 320
+    y_center = 240
+
     x_deviation = abs(x_center - x_real)
     y_deviation = abs(y_center - y_real)
+    
     if x or y is not None:
         if(x_deviation > deviation):
-            value_PWM_first_serv = math.copysign(1,x_center - x_real)*10
-            sc.SendPkg(1,value_PWM_first_serv)
+            value_PWM_first_serv = value_PWM_first_serv + math.copysign(1,x_center - x_real)*coef
+            sc.SendPkg(1,value_PWM_first_serv,ser)
 
 
         if(y_deviation > deviation):
-            value_PWM_second_serv = math.copysign(1,y_center - y_real)*10
-            sc.SendPkg(2,value_PWM_second_serv)
+            value_PWM_second_serv = value_PWM_second_serv + math.copysign(1,y_center - y_real)*coef
+            sc.SendPkg(2,value_PWM_second_serv,ser)
+
+    return value_PWM_first_serv, value_PWM_second_serv
+
+
+
+
 
 
 

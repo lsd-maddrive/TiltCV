@@ -35,6 +35,7 @@ def processing_morphological_operators(frame):
 
 
 
-def processed_frame(frame):
+def processed_frame(frame,dilation):
 
 	processed = cv2.bitwise_and(frame,frame, mask = dilation)
+	return processed
