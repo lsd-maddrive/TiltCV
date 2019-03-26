@@ -1,10 +1,11 @@
 import track_bar as tb
 import math
 import serial_connection as sc
+import cv2
 
 
 
-def check_deviation(x_real,y_real,value_PWM_first_serv,value_PWM_second_serv,ser):
+def check_deviation_sign(x_real,y_real,value_PWM_first_serv,value_PWM_second_serv,ser):
    
     deviation = tb.getValueDeviation()
 
@@ -12,171 +13,69 @@ def check_deviation(x_real,y_real,value_PWM_first_serv,value_PWM_second_serv,ser
     x_center = 320
     y_center = 240
 
-    x_deviation = abs(x_center - x_real)
-    y_deviation = abs(y_center - y_real)
+
     
-    if x or y is not None:
+    if x_real or y_real is not None:
+
+        x_deviation = abs(x_center - x_real)
+        y_deviation = abs(y_center - y_real)
+
         if(x_deviation > deviation):
             value_PWM_first_serv = value_PWM_first_serv + math.copysign(1,x_center - x_real)*coef
-            sc.SendPkg(1,value_PWM_first_serv,ser)
+            if(value_PWM_first_serv < 0):
+                value_PWM_first_serv = 0
+
+            if(value_PWM_first_serv> 1000):
+                value_PWM_first_serv = 1000
+            sc.SendPkg(1,int(value_PWM_first_serv),ser)
 
 
         if(y_deviation > deviation):
-            value_PWM_second_serv = value_PWM_second_serv + math.copysign(1,y_center - y_real)*coef
-            sc.SendPkg(2,value_PWM_second_serv,ser)
+            value_PWM_second_serv = value_PWM_second_serv - math.copysign(1,y_center - y_real)*coef
+            if(value_PWM_second_serv<0):
+                value_PWM_second_serv = 0
+
+            if(value_PWM_second_serv>1000):
+                value_PWM_second_serv=1000
+            sc.SendPkg(2,int(value_PWM_second_serv),ser)
 
     return value_PWM_first_serv, value_PWM_second_serv
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cap = cv2.VideoCapture(0)
-
-
-
-
-
-center_deviation = 5
-
-
-
-
-
-
-
-
-
-cv2.createTrackbar('deviation','image', 180, 240, nothing)
-
-
-x = None
-y = None
-
-while(1):
-
-
-    x = None
-    y = None
-
-
-
-  
-
-
-
-    if (x or y) is not None:
-       
-        if x > x_right_deviation or x < x_left_deviation or y < y_up_deviation or y >y_down_deviation:
-
-            if x > x_right_deviation:
-                print('deviation to the right x')
-
-                value_PWM_first_serv = value_PWM_first_serv - 10
-
-                if value_PWM_first_serv < 0:
-                    print('low value first serv')    
-                    value_PWM_first_serv = 0 
-
-                else:                 
-                    send_pkg = bytes([ord('#'), first_serv]) + value_PWM_first_serv.to_bytes(2, byteorder='big')
-                    ser.write(send_pkg)
-
-            if x < x_left_deviation:
-                print('deviation to the left x')
-
-      
-
-                value_PWM_first_serv = value_PWM_first_serv + 10
-
-                if value_PWM_first_serv > 1000:
-                    print('great value second serv') 
-                    value_PWM_first_serv = 1000
-               
-                else:
-                    send_pkg = bytes([ord('#'), first_serv]) + value_PWM_first_serv.to_bytes(2, byteorder='big')
-                    ser.write(send_pkg)
-
-
-            if y < y_up_deviation:
-                print('upward deviation y')
-                
-  
-
-                value_PWM_second_serv = value_PWM_second_serv - 10
-                if value_PWM_second_serv < 0:
-
-                    print('low value second serv') 
-                    value_PWM_second_serv = 0
-                
-                else:
-                    send_pkg = bytes([ord('#'), second_serv]) + value_PWM_second_serv.to_bytes(2, byteorder='big')
-                    ser.write(send_pkg)             
-
-            if y > y_down_deviation:
- 
-
-                value_PWM_second_serv = value_PWM_second_serv + 10
-
-                if value_PWM_second_serv > 1000:
-
-                    print('great value of the second serv')
-                    value_PWM_second_serv = 1000
-
-                else:
-                    send_pkg = bytes([ord('#'), second_serv]) + value_PWM_second_serv.to_bytes(2, byteorder='big')
-                    ser.write(send_pkg)    
-
-                print('downward deviation y')
-        
-        else: print('good')        
-        
-
-    else: print('not found x or y')
-
+def check_deviation(x_real,y_real,value_PWM_first_serv,value_PWM_second_serv,ser):
+   
+    deviation = tb.getValueDeviation()
+
+    coef =0.1
+    x_center = 320
+    y_center = 240
 
 
     
+    if x_real or y_real is not None:
 
-    
+        x_deviation = abs(x_center - x_real)
+        y_deviation = abs(y_center - y_real)
+
+        if(x_deviation > deviation):
+            value_PWM_first_serv = value_PWM_first_serv + (x_center - x_real)*coef
+            if(value_PWM_first_serv < 0):
+                value_PWM_first_serv = 0
+
+            if(value_PWM_first_serv> 1000):
+                value_PWM_first_serv = 1000
+            sc.SendPkg(1,int(value_PWM_first_serv),ser)
 
 
+        if(y_deviation > deviation):
+            value_PWM_second_serv = value_PWM_second_serv - (y_center - y_real)*coef
+            if(value_PWM_second_serv<0):
+                value_PWM_second_serv = 0
 
+            if(value_PWM_second_serv>1000):
+                value_PWM_second_serv=1000
+            sc.SendPkg(2,int(value_PWM_second_serv),ser)
 
+    return value_PWM_first_serv, value_PWM_second_serv

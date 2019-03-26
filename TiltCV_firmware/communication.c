@@ -16,8 +16,8 @@ SerialDriver *comm_dr = &SD2;
  */
 void serial_comm_init( void )
 {
-    palSetPadMode( GPIOD, 5, PAL_MODE_ALTERNATE(7) );   // TX = PG_14
-    palSetPadMode( GPIOD, 6, PAL_MODE_ALTERNATE(7) );   // RX = PG_9
+    palSetPadMode( GPIOD, 5, PAL_MODE_ALTERNATE(7) );   // TX = PD_5
+    palSetPadMode( GPIOD, 6, PAL_MODE_ALTERNATE(7) );   // RX = PD_6
 
     sdStart( comm_dr, &sdcfg );
 }
