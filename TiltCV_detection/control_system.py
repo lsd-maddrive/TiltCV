@@ -2,6 +2,7 @@ import track_bar as tb
 import math
 import serial_connection as sc
 import cv2
+import time
 
 
 
@@ -79,3 +80,14 @@ def check_deviation(x_real,y_real,value_PWM_first_serv,value_PWM_second_serv,ser
             sc.SendPkg(2,int(value_PWM_second_serv),ser)
 
     return value_PWM_first_serv, value_PWM_second_serv
+
+
+def write_value_error(x, y, x_control_syst, y_control_syst, start_time, time_control_syst, file):
+    
+    time_control_syst.append(time.time()-start_time)
+    x_control_syst.append(x)
+    y_control_syst.append(y)
+    file.write(str(x) + '\t' + str(y) + '\n')
+
+    return x_control_syst, y_control_syst, time_control_syst
+

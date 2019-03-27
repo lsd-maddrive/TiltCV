@@ -22,7 +22,7 @@ def createTrackbar():
 	cv2.createTrackbar('minrad','image', 3, 255, nothing)
 	cv2.createTrackbar('maxrad','image', 700, 1000, nothing)
 
-	cv2.createTrackbar('deviation','image', 180, 240, nothing)
+	cv2.createTrackbar('deviation','image', 0, 240, nothing)
 
 
 def getValueHSV():
