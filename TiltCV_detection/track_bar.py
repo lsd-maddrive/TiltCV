@@ -7,7 +7,7 @@ def nothing(x):
 def createTrackbar():
 	cv2.namedWindow('image')
 
-	cv2.createTrackbar('DownH1','image', 65, 255, nothing)
+	cv2.createTrackbar('DownH1','image', 69, 255, nothing)
 	cv2.createTrackbar('UpH1','image', 92, 255, nothing)
 
 	cv2.createTrackbar('DownS','image', 55, 255, nothing)
