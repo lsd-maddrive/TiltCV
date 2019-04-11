@@ -12,7 +12,7 @@ def finding_a_circle_around_the_contour(frame):
 	_, contours, hierarchy = cv2.findContours(dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	# contours,_ = cv2.findContours(dilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-	cv2.drawContours(frame,contours,0,(0,0,255),2)
+	# cv2.drawContours(frame,contours,0,(0,0,255),2)
 
 	if contours:
 
@@ -22,6 +22,12 @@ def finding_a_circle_around_the_contour(frame):
 		radius = int(radius)
 			
 		cv2.circle(frame,center,radius,(0,255,0),2)
+
+
+	for_pps_dilation = cv2.cvtColor(dilation,cv2.COLOR_GRAY2BGR)
+	tst_dilation = np.hstack((for_pps_dilation,frame))
+	cv2.imshow('find',tst_dilation)
+
 
 	return frame, x,y
 

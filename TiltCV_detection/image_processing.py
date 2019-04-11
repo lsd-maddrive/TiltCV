@@ -7,6 +7,7 @@ def conversion(frame):
 	
 	blur = cv2.GaussianBlur(frame,(3,3),0)
 	hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
+	
 
 	return hsv
 
@@ -18,6 +19,7 @@ def boundaries_hsv(frame):
 
 	lower_value, upper_value = tb.getValueHSV()
 	hsv_with_boundaries = cv2.inRange(hsv, lower_value, upper_value)
+
 
 	return hsv_with_boundaries
 
@@ -31,6 +33,7 @@ def processing_morphological_operators(frame):
 	erosion = cv2.erode(hsv_with_boundaries, kernel, iterations = erosion_iter)
 	dilation = cv2.dilate(erosion, kernel, iterations = dilation_iter)
 
+
 	return dilation
 
 
@@ -38,4 +41,5 @@ def processing_morphological_operators(frame):
 def processed_frame(frame,dilation):
 
 	processed = cv2.bitwise_and(frame,frame, mask = dilation)
+	
 	return processed
