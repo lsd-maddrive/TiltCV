@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>STM32F103_ChibiOS_template</name>
+	<name>Test_UART</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/MAPLEMINI_STM32_F103</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ST_NUCLEO144_F767ZI</locationURI>
 		</link>
 		<link>
 			<name>os</name>

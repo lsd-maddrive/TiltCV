@@ -140,7 +140,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_TM                       FALSE
+#define CH_CFG_USE_TM                       TRUE
 
 /**
  * @brief   Threads registry APIs.
@@ -515,7 +515,7 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
-#define CORTEX_VTOR_INIT 0x5000
+#define CORTEX_VTOR_INIT                    0x00200000U
 
 #endif  /* CHCONF_H */
 
