@@ -1,6 +1,7 @@
 import serial
 
 
+
 def InitSerial(start_value_PWM_first_serv, start_value_PWM_second_serv):
 	
 	ser = serial.Serial('/dev/ttyUSB0',115200,timeout=1)

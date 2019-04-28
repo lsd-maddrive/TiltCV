@@ -2,8 +2,11 @@ import cv2
 import numpy as np
 import argparse
 import time
+import json
 
- 
+import skfuzzy as fuzz
+from skfuzzy import control as System_fuzzy
+
 import track_bar as tb
 import find_object as fo
 import control_system as cs
@@ -14,6 +17,11 @@ import plot_graph as pg
 import for_measurements as fm
 
 
+
+        
+
+
+    
 cap = cv2.VideoCapture(0)
 tb.createTrackbar()
 
